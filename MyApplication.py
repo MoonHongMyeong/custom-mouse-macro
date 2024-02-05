@@ -14,6 +14,9 @@ class Recorder(QThread):
         self._listener = mouse.Listener(on_click=self._on_click)
         self._list = []
 
+    def resetMacroPath(self):
+        self._list.clear()
+
     def set_running(self, is_running):
         print('is_running:', is_running)
         self._is_running = is_running
@@ -78,6 +81,7 @@ class MyApplication(QMainWindow):
     def input_toggled(self, check):
         self.recorder.set_running(check)
         if check:
+            self.recorder.resetMacroPath()
             self.input_btn.setText('입력종료')
             self.statusBar().showMessage('입력 중')
             self.text_browser.clear()
@@ -86,15 +90,16 @@ class MyApplication(QMainWindow):
             self.statusBar().showMessage('입력완료')
 
     def macro_start(self, check):
-        if check:
-            print('macro start click')
-            mouse = Controller()
-            list = self.recorder.getRecord()
-            for i in range(0, len(list) - 2):
-                el = list[i]
-                print(el)
-                if el['pressed']:
-                    continue
-                mouse.position = (el['x'], el['y'])
-                mouse.click(Button.left, 1)
-                time.sleep(0.5)
+        if not self.input_btn.isChecked():
+            if check:
+                print('macro start click')
+                mouse = Controller()
+                list = self.recorder.getRecord()
+                for i in range(0, len(list) - 2):
+                    el = list[i]
+                    print(el)
+                    if el['pressed']:
+                        continue
+                    mouse.position = (el['x'], el['y'])
+                    mouse.click(Button.left, 1)
+                    time.sleep(0.5)
