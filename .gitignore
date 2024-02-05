@@ -1,0 +1,6 @@
+.venv
+build
+dist
+.idea
+main.spec
+mouse-macro.imi
